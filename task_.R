@@ -21,7 +21,7 @@ a <- rep(a,10)
 b <- rep(b,10)
 abc <- data.frame(a,b)
 abc <- cbind(abc, abc, abc, abc, abc, abc, abc, abc, abc, abc, abc, abc, abc, abc, abc)
-abc <- cbind(abc, abc, abc)
+#abc <- cbind(abc, abc, abc)
 
 c <- c(rep(2010, length(a)/2), rep(2011, length(a)/2))
 abc <- cbind(abc, c)
@@ -34,15 +34,15 @@ library(data.table)
 years <- 2010:2011
 abc <- as.data.table(abc)
 setkey(abc, year)
-temp <- abc %>% filter(year==years[1]) %>% .[-ncol(abc)] #%>% as.data.table
-
+temp <- abc[year == years[1]]
+temp <- temp[, !"year", with=F]
+#temp <- abc %>% filter(year==years[1]) %>% .[-ncol(abc)] #%>% as.data.table
+dim(temp)
 #temp[list("A")]
 
 #abc %>% group_by(year) %>% summarise_each(funs(summary(.)))
 #table(abc)
 #temp %>% summarise_each(funs(length(.)))
-
-dim(temp)
 
 system.time(table_multi(temp))
 system.time(unlist(lapply(temp, table)))
