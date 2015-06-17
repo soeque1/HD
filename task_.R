@@ -166,8 +166,6 @@ keyLen <- length(keyArray)
 
 keys <- temp[1,1:10, with=F] %>% as.data.frame %>% .[[1]]
 keys
-mget(keys, envir = testHash)
-
 
 
 apply(temp[1:5,1:10], 2, function(x) mget(x, envir= testHash))
@@ -205,13 +203,24 @@ colnames(abc) <- paste("V", colnames(abc), sep="")
 h.b <- c("A", "B", "C", "D", "E")
 library(hash)
 h <- hash(keys = h.b, values = seq_along(h.b))
-values(h, keys = abc$V1[1])
+#values(h, keys = abc$V1[1])
 
-for (i in 1:length(abc$V1))
-{
-j <- values(h, keys = abc$V1[i])
-hash.table.results$value[j] = hash.table.results$value[j] + 1 
+testHash <- new.env(hash = TRUE, size = 10000L)
+for(i in 1:5) {
+    key <- h.b[i]
+    assign(key, i, envir = testHash)
 }
+
+
+
+
+mget(abc[[1]], testHash)
+
+
+
+library(dplyr)
+
+
 
 
 
@@ -282,3 +291,118 @@ as.character(hash.table$h.b[1:5])
 stri_count_fixed(readLines(con, 100), c("A","B","C"))
 
 stri_count_fixed("GCCCAAAATTTTCCGG",c("G","C"))
+
+################
+
+h.a <- c(rep(1, 5), rep(2, 5))
+h.b <- c("A", "B", "C", "D", "E")
+hash.table <- data.frame(h.a, h.b)
+hash.table.results <- data.frame(names = paste(hash.table[,1], hash.table[,2], sep="."), value = rep(0, nrow(hash.table)))
+hash.table.results <- data.frame(names = 1:10, value = rep(0, nrow(hash.table)))
+
+testHash1 <- new.env(hash = TRUE, size = 10000L)
+for(i in 1:5) {
+ key <- hash.table[i,2]
+ assign(key, i, envir = testHash1)
+}
+
+testHash2 <- new.env(hash = TRUE, size = 10000L)
+for(i in 1:5) {
+    key <- hash.table[i,2]
+    assign(key, i, envir = testHash2)
+}
+
+testHash <- list(testHash1, testHash2)
+
+let <- c("A", "B", "C", "D", "E")
+
+characters <- NULL
+for(i in 1:1000000) {
+    characters <- rbind(characters, paste(let[as.integer( runif(200,1,5.99))], collapse="")) 
+}
+
+sourceCpp("table.cpp")
+tableC(unlist(mget(substr(characters,1,1), envir = testHash[[1]])))
+
+
+#get("A", testHash)
+
+
+
+
+
+unlist(mget(make.keys(A), testHash))
+
+
+
+memory <- new.env(hash = TRUE, size = 10000L)
+P_12<-function(n,k) {
+    if (k<0||k>n) return(0)
+    if (n==0 && k==0) return(1)
+    if (k==1) return(n)
+    if (exists(paste(n,k),memory,inherits=FALSE))
+        return(get(paste(n,k),memory))
+    updates<-P_12(n-1,k)+ P_12(n-1,k-1)
+    assign(paste(n,k),updates,envir=memory)
+    return(updates)
+}
+
+hash.table
+A = c("A", "B", "C", "D")
+A
+
+'''
+#include <Rcpp.h>
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+std::map<double, int> tableC(NumericVector x) {
+    std::map<double, int> counts;
+    
+    int n = x.size();
+    for (int i = 0; i < n; i++) {
+        counts[x[i]]++;
+    }
+    
+    return counts;
+', pulgin="Rcpp")
+}
+'''
+library(Rcpp)
+
+runi <- cxxfunction(signature(number="numeric",alpha="numeric", beta="numeric"),'
+                    int n = as<int>(number);
+                    double a = as<double>(alpha);
+                    double b = as<double>(beta);
+                    RNGScope scope;
+                    
+                    NumericVector res = runif( n, a, b ) ;
+                    return res ;
+                    ', plugin="Rcpp" )
+
+
+
+sourceCpp("table.cpp")
+tableC(c(1,2,2,3))
+
+
+characters <- NULL
+for(i in 1:10000) {
+characters <- rbind(characters, paste(LETTERS [as.integer( runif(200,1,26.99))], collapse="")) 
+}
+
+str(characters)
+
+# 모든 문자열의 첫번째 위치의 문자만 모아서 테이블 만들기
+table(substr(characters,1,1))
+
+
+
+# 1~200개의 결과를 리스트로 통합
+
+lists <- NULL
+for (i in 1:200){
+lists <- c(lists, list(table(substr(characters,i,i))))
+}
+
+lists
