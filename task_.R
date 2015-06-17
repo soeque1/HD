@@ -20,12 +20,28 @@ hash.table.results <- data.frame(names = 1:10, value = rep(0, nrow(hash.table)))
 
 
 
-a <- c(rep("A", 100000), rep("B", 200000), rep("C", 300000), rep("D", 400000))
-b <- c(rep("A", 400000), rep("B", 300000), rep("C", 200000), rep("D", 100000))
-a <- rep(a,10)
-b <- rep(b,10)
-abc <- data.frame(a,b)
-abc <- cbind(abc, abc, abc, abc, abc, abc, abc, abc, abc, abc, abc, abc, abc, abc, abc)
+a <- c(rep("A", 1), rep("B", 2), rep("C", 3), rep("D", 4))
+b <- c(rep("A", 4), rep("B", 3), rep("C", 2), rep("D", 1))
+c <- c(rep("D", 4), rep("C", 3), rep("B", 2), rep("A", 1))
+a <- paste(a, collapse = "")
+b <- paste(b, collapse = "")
+c <- paste(c, collapse = "")
+abc <- rbind(a, b, c)
+for (i in 1:2)
+{
+abc <- rbind(abc, abc)
+}
+
+library(data.table)
+abc <- as.data.table(abc)
+dim(abc)
+
+b <- paste(b, collapse = "")
+ab <- paste(a, b, sep = "")
+ba <- paste(b, a, sep = "")
+abc <- data.frame(ab)
+abc <- rbind(abc, ba)
+
 #abc <- cbind(abc, abc, abc)
 
 c <- c(rep(2010, length(a)/2), rep(2011, length(a)/2))
@@ -388,8 +404,13 @@ tableC(c(1,2,2,3))
 
 characters <- NULL
 for(i in 1:10000) {
-characters <- rbind(characters, paste(LETTERS [as.integer( runif(200,1,26.99))], collapse="")) 
+characters <- rbind(characters, paste(LETTERS [as.integer( runif(200,1,4.99))], collapse="")) 
 }
+
+dt <- rbind(dt, dt)
+dt <- rbind(dt, dt)
+dt <- rbind(dt, dt)
+write.csv(dt, "dt.csv")
 
 str(characters)
 
