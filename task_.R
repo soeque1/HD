@@ -427,3 +427,27 @@ lists <- c(lists, list(table(substr(characters,i,i))))
 }
 
 lists
+
+
+col_num <- sprintf("%3d", 1:200)
+testHash <- new.env(hash = TRUE, size = 10000000L)
+for(i in 1:length(col_num)) {
+    key <- col_num[i]
+    assign(key, i, envir = testHash)
+}
+
+get(sprintf("%3d", 1), envir = testHash)
+
+### HASH_TABLE
+HASH_TABLE <- function() new.env()
+INSERT <- function(key, value, ht)  ht[[key]] <- value
+LOOKUP <- function(key, ht) ht[[key]]
+DELETE <- function(key, ht) rm(list=key,envir=ht,inherits=FALSE)
+
+ht <- HASH_TABLE()
+INSERT("key",1L,ht)
+INSERT("foo",1L,ht)
+ls.str(ht)
+
+LOOKUP("foo",ht)==1L
+ht[["foo"]]==2L
