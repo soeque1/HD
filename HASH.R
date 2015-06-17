@@ -27,10 +27,12 @@ for (i in 1:200)
     for (j in 1:sum(hash.table[,1] == i))
     {
         key <- hash.table[hash.table[,1] == i,2][j]
-        assign(key, j, envir = Hash[[i]])
+        assign(key, as.integer(j), envir = Hash[[i]])
     }
 }
 
+ls(Hash[[19]])
+is.integer(get("A", Hash[[19]]))
 
 ####### Data Load ##########
 library(data.table)
@@ -44,21 +46,25 @@ dim(dt)
 
 ####### Make Table ##########
 system.time(a <- mget(substr(dt[[2]],1,1), envir = Hash[[1]]))
-
-sapply(substr(dt[[2]],1,1), function(x) get(x, envir = Hash[[1]]))
-
-system.time(unlist(mget(substr(dt[[2]],1,1), envir = Hash[[1]])))
-system.time(tableC(unlist(mget(substr(dt[[2]],1,1), envir = Hash[[1]]))))
-
-for (i in 1:200)
-{
-    print(table(substr(dt[[2]],i,i)))
-}
-
+system.time(as.integer(mget(substr(dt[[2]],1,1), envir = Hash[[1]])))
 
 library(Rcpp)
 sourceCpp("table.cpp")
-for (i in 1:200)
+system.time(tableC(as.integer(mget(substr(dt[[2]],1,1), envir = Hash[[1]]))))
+system.time(table(substr(dt[[2]],1,1)))
+
+table_list <- list()
+
+for (i in 1:2)
 {
-print(tableC(unlist(mget(substr(dt[[2]],i,i), envir = Hash[[i]]))))
+table_list[[i]] <- table(substr(dt[[2]],i,i))
 }
+
+unlist(table_list)
+
+for (i in 1:2)
+{
+table_list[[i]] <- tableC(as.integer(mget(substr(dt[[2]],i,i), envir = Hash[[i]])))
+}
+
+unlist(table_list)
