@@ -21,10 +21,12 @@ Hash <- list()
 
 for (i in 1:200)
 {
-    print(i)    
-    Hash[[i]] <- new.env(hash = TRUE, size = 10000L)
+ #   print(i)   
+    n <- sum(hash.table[,1] == i)
     
-    for (j in 1:sum(hash.table[,1] == i))
+    Hash[[i]] <- new.env(hash = TRUE, size = n)
+    
+    for (j in 1:n)
     {
         key <- hash.table[hash.table[,1] == i,2][j]
         assign(key, as.integer(j), envir = Hash[[i]])
