@@ -1,3 +1,20 @@
+dweibull3 <- function(x, location,scale,shape) {shape/scale*((x -location)/scale)^(shape-1)*exp(-((x-location)/scale)^shape)}
+pweibull3 <- function(x, location,scale,shape) {1 - exp(-((x-location)/scale)^shape)}
+
+set.seed(123)
+library("FAdist")
+x3 <- rweibull3(1000, thres = 5, scale = 100, shape = 3)
+hist(x3)
+#x3 <- rweibull(100, shape = 4, scale = 100)                             #
+library(fitdistrplus)
+
+w3den <- function(x, a,b,c) {c/b*((x -a)/b)^(c-1)*exp(-((x-a)/b)^c)}
+a <- MASS::fitdistr(x3, w3den, start= list(a = 0, b = mean(x3), c = 2))      #
+b <- fitdist(x3, "weibull3", start= list(location = 0, scale = mean(x3), shape = 2))
+b
+gofstat(a)
+
+
 rm(list=ls())
 library(parallel)
 table_multi <- function(allFiles){

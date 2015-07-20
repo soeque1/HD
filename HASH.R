@@ -22,7 +22,7 @@ Hash <- list()
 for (i in 1:200)
 {
  #   print(i)   
-    n <- sum(hash.table[,1] == i)
+    n <- as.integer(sum(hash.table[,1] == i))
     
     Hash[[i]] <- new.env(hash = TRUE, size = n)
     
@@ -40,7 +40,7 @@ is.integer(get("A", Hash[[19]]))
 library(data.table)
 dt <- fread("characters.csv")
 
-for (i in 1:10)
+for (i in 1:11)
 {
 dt <- rbind(dt, dt)
 }
