@@ -1,5 +1,5 @@
 dweibull3 <- function(x, location,scale,shape) {shape/scale*((x -location)/scale)^(shape-1)*exp(-((x-location)/scale)^shape)}
-pweibull3 <- function(x, location,scale,shape) {1 - exp(-((x-location)/scale)^shape)}
+pweibull3 <- function(q, location,scale,shape) {1 - exp(-((q-location)/scale)^shape)}
 
 set.seed(123)
 library("FAdist")
@@ -12,7 +12,7 @@ w3den <- function(x, a,b,c) {c/b*((x -a)/b)^(c-1)*exp(-((x-a)/b)^c)}
 a <- MASS::fitdistr(x3, w3den, start= list(a = 0, b = mean(x3), c = 2))      #
 b <- fitdist(x3, "weibull3", start= list(location = 0, scale = mean(x3), shape = 2))
 b
-gofstat(a)
+gofstat(b)
 
 
 rm(list=ls())
