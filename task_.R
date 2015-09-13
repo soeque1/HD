@@ -1,3 +1,20 @@
+### characters to numerics
+dt <- data.table(x = c("1", "2", "3"), y = c("4", "5", "6"), z = c("A", "B", "C"))
+numericCol = c("x", "y")
+
+dt[, (numericCol) := lapply(.SD, as.numeric), .SDcols = numericCol]
+str(dt)
+
+### split vector
+library(dplyr)
+vec = c("A,B")
+vec = strsplit(vec, ",", fixed = T)[[1]]
+dt %>% filter(z %in% vec)
+dt %>% filter(z %in% c("A", "B"))
+
+
+####################
+
 dweibull3 <- function(x, location,scale,shape) {shape/scale*((x -location)/scale)^(shape-1)*exp(-((x-location)/scale)^shape)}
 pweibull3 <- function(q, location,scale,shape) {1 - exp(-((q-location)/scale)^shape)}
 
